@@ -1,118 +1,153 @@
-# Lab 1: Requirements Engineering & UML Use-Case Modelling
+# Lab 5: Static Code Analysis — Campus Parking Permit Manager
 
-## Student Club Event Ticketing & Budget Portal
+## 1. Project Overview
 
-### 1. Project Overview
+The Campus Parking Permit Manager is a Python application that manages vehicle parking permits across campus parking zones. It supports permit registration, revocation, expiry checking, and the identification of vehicles that are not authorized to park in a specified zone.
 
-The **Student Club Event Ticketing & Budget Portal** is an integrated system designed to support student clubs in managing event proposals, university budget allocation requests, and event ticketing.
+This lab demonstrates how static code analysis tools can identify code quality, style, maintainability, and security issues, and how those issues can be addressed through systematic code improvements.
 
-The system provides a structured workflow in which club event proposals can be submitted and reviewed, budget requests can be processed through the appropriate approval workflow, and QR-code tickets can be generated and validated for event attendees.
+## 2. Features
 
-### 2. Problem Context
+- Register parking permits for vehicles.
+- Assign permits to campus parking zones A, B, and C.
+- Generate permit numbers and expiry dates.
+- Revoke existing parking permits.
+- Check whether a permit has expired.
+- Scan a parking zone and flag vehicles with missing, invalid-zone, or expired permits.
+- Save and load permit information using JSON.
 
-Student clubs require a centralized portal to manage the process of organizing events. The system is intended to simplify event proposal submission, university approval, budget allocation, and attendee ticket management while ensuring that access to sensitive functions is controlled according to user roles.
+## 3. Technologies and Tools
 
-### 3. Actors
+- **Python 3.13** — Programming language.
+- **Pylint** — Identifies programming errors, code quality issues, and maintainability problems.
+- **Flake8** — Checks Python style and coding convention violations.
+- **Bandit** — Identifies potential security issues in Python code.
+- **Git and GitHub** — Version control and project submission.
+- **Visual Studio Code** — Development environment.
 
-The following actors interact with the system:
+## 4. Project Structure
 
-* **Club Lead** – Submits event proposals, requests budget allocations, and manages event tickets.
-* **Campus Admin** – Reviews and approves or rejects student club event proposals.
-* **Finance Officer** – Reviews and approves or rejects budget allocation requests.
-* **Attendee** – Uses a QR-code ticket for event entry and check-in.
+```text
+L5_10_parking_permits/
+├── parking_system.py
+├── parking_system_before.py
+├── permits.json
+├── pylint_report.txt
+├── flake8_report.txt
+├── bandit_report.txt
+└── reports/
+    ├── before/
+    │   ├── pylint_report.txt
+    │   ├── flake8_report.txt
+    │   └── bandit_report.txt
+    └── after/
+        ├── pylint_report.txt
+        ├── flake8_report.txt
+        └── bandit_report.txt
+```
 
-### 4. Functional Requirements
+**Note:** The report files record the static analysis results before and after the code improvements. The `parking_system_before.py` file preserves the original implementation for comparison.
 
-The project specifies exactly five Functional Requirements:
+## 5. Installation
 
-| Req ID | Requirement                      |
-| ------ | -------------------------------- |
-| FR-001 | Submit Event Proposal            |
-| FR-002 | Request Budget Allocation        |
-| FR-003 | Approve or Reject Event Proposal |
-| FR-004 | Approve or Reject Budget Request |
-| FR-005 | Generate QR-Code Tickets         |
+Ensure Python is installed and available from the terminal.
 
-Each functional requirement includes its description, priority, measurable acceptance criteria, and rationale in the Requirements document.
+Install the required static analysis tools:
 
-### 5. Non-Functional Requirements
+```bash
+python -m pip install pylint flake8 bandit
+```
 
-The project specifies two Non-Functional Requirements:
+## 6. Running the Application
 
-| Req ID  | Requirement |
-| ------- | ----------- |
-| NFR-001 | Performance |
-| NFR-002 | Security    |
+Run the parking permit manager:
 
-The non-functional requirements define measurable performance and role-based access-control expectations for the system.
+```bash
+python parking_system.py
+```
 
-### 6. UML Use Cases
+The application loads the permit database, performs sample permit operations, scans a parking zone, asks for a vehicle plate to revoke, and saves the updated permit information.
 
-The UML Use-Case Diagram contains the following use cases:
+Press Enter when prompted to skip revoking a permit.
 
-* **UC-01 – Submit Event Proposal**
-* **UC-02 – Request Budget Allocation**
-* **UC-03 – Review Event Proposal**
-* **UC-04 – Review Budget Request**
-* **UC-05 – Generate QR-Code Tickets**
-* **UC-06 – Check In Attendee**
-* **UC-07 – Validate QR Ticket**
-* **UC-08 – Regenerate QR Ticket**
+## 7. Static Code Analysis
 
-### 7. UML Relationships
+The project uses three static analysis tools.
 
-The UML Use-Case Diagram includes both required relationship types.
+### Pylint
 
-#### `<<include>>` Relationship
+Pylint evaluates code quality, naming conventions, documentation, exception handling, and other programming practices.
 
-**UC-06 – Check In Attendee** `<<include>>` **UC-07 – Validate QR Ticket**
+Generate a report:
 
-QR-ticket validation is a required part of the attendee check-in process. Therefore, the Check In Attendee use case includes Validate QR Ticket.
+```bash
+python -m pylint parking_system.py --output-format=text > pylint_report.txt
+```
 
-#### `<<extend>>` Relationship
+### Flake8
 
-**UC-08 – Regenerate QR Ticket** `<<extend>>` **UC-05 – Generate QR-Code Tickets**
+Flake8 checks Python style, line length, indentation, and related coding convention violations.
 
-Regenerating a QR ticket represents optional or conditional behaviour that occurs when an existing ticket needs to be regenerated.
+Generate a report:
 
-### 8. Use-Case Flow
+```bash
+python -m flake8 parking_system.py --output-file=flake8_report.txt
+```
 
-The detailed Use-Case Flow is specified for:
+### Bandit
 
-**UC-06 – Check In Attendee**
+Bandit scans Python code for potential security vulnerabilities.
 
-The flow contains:
+Generate a report:
 
-* Preconditions
-* Main Success Scenario
-* Alternate Flow for an invalid or expired QR ticket
-* Alternate Flow for an already-used ticket
-* Postconditions
+```bash
+python -m bandit -r parking_system.py -f txt -o bandit_report.txt
+```
 
-The main success scenario describes the normal QR-ticket check-in process, while the alternate flows describe how the system handles unsuccessful check-in conditions.
+## 8. Before-and-After Comparison
 
-### 9. Project Files
+The original implementation is preserved in `parking_system_before.py`.
 
-The repository contains the following deliverables:
+The `reports/before/` directory contains the original static analysis reports, while `reports/after/` contains the reports generated after the code improvements.
 
-| File                       | Description                                                                                                 |
-| -------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `README.md`                | Project overview, actors, requirements, use cases, relationships, and deliverables                          |
-| `Requirements.docx`        | Requirements Table containing 5 Functional Requirements and 2 Non-Functional Requirements                   |
-| `Use_Case_Flow.docx`       | Use-Case Flow Specification for UC-06 – Check In Attendee                                                   |
-| `UML_Use_Case_Diagram.pdf` | UML Use-Case Diagram showing actors, use cases, associations, `<<include>>`, and `<<extend>>` relationships |
+These reports can be compared to evaluate changes in code quality, style compliance, and potential security issues.
 
-### 10. Tools Used
+The final version achieved a **Pylint score of 10.00/10** in the recorded analysis run. The recorded Bandit report identified no issues, and the Flake8 report was empty, indicating that no Flake8 violations were reported in that run.
 
-* **Microsoft Word** – Requirements Table and Use-Case Flow
-* **draw.io / diagrams.net** – UML Use-Case Diagram
-* **GitHub** – Repository management and submission
+## 9. Issues Identified and Fixed
 
-### 11. Lab Deliverables
+The original implementation was examined using Pylint, Flake8, and Bandit.
 
-This repository contains the deliverables for **Lab 1: Requirements Engineering & UML Use-Case Modelling**:
+The improvements addressed issues such as:
 
-1. A Requirements Table containing exactly **5 Functional Requirements** and **2 Non-Functional Requirements**.
-2. A UML Use-Case Diagram containing the identified actors and use cases, along with associations, `<<include>>`, and `<<extend>>` relationships.
-3. A Use-Case Flow Specification for **UC-06 – Check In Attendee**, including the Main Success Scenario and Alternate Flows.
-4. This README file documenting the project and its contents.
+- Missing module and function docstrings.
+- Incorrect naming conventions.
+- Overly long lines.
+- Broad exception handling.
+- Mutable default arguments.
+- File handling without context managers.
+- File encoding not being explicitly specified.
+- Potential security concerns related to random number generation.
+
+The original and final reports provide evidence of the analysis results. The exact fixes should be documented in the project's `issues.md` file.
+
+## 10. Deliverables
+
+The project includes:
+
+1. **`parking_system.py`** — Improved parking permit manager.
+2. **`parking_system_before.py`** — Original implementation before fixes.
+3. **`permits.json`** — Stored parking permit data.
+4. **`issues.md`** — Documentation of identified issues and their fixes, if included in the project.
+5. **`reflection.md`** — Answers to the lab's reflection questions, if included in the project.
+6. **`reports/before/`** — Original static analysis reports.
+7. **`reports/after/`** — Final static analysis reports.
+8. **Root-level report files** — Additional reports generated during the analysis process.
+
+## 11. Conclusion
+
+This lab demonstrates how static code analysis can improve the quality, readability, maintainability, and security of a Python application.
+
+Using Pylint, Flake8, and Bandit helped identify potential weaknesses in the original implementation and verify the results of subsequent improvements.
+
+The project also demonstrates the importance of preserving the original implementation and recording before-and-after analysis results for comparison.
