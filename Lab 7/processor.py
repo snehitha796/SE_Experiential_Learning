@@ -1,94 +1,66 @@
-def parse_transit_corridor(corridor_code):
-    if corridor_code is None or not isinstance(corridor_code, str):
-        raise TypeError("Corridor code must be a non-empty string")
-    
-    parts = corridor_code.strip().split('-')
-    if len(parts) != 3:
-        raise ValueError(f"Invalid format. Expected 'ORIG-DEST-ZONES', got: '{corridor_code}'")
-        
-    orig, dest, zones_str = parts
-    if not orig.strip() or not dest.strip():
-        raise ValueError("Origin and destination cannot be empty")
-        
+def process_age(age):
+    if age is None:
+        raise TypeError("Age cannot be None")
+    if isinstance(age, bool):
+        raise TypeError("Age cannot be a boolean")
     try:
-        zones = int(zones_str)
+        age_int = int(age)
     except (ValueError, TypeError):
-        raise ValueError(f"Zones must be a valid integer, got: '{zones_str}'")
+        raise ValueError(f"Invalid age input: {age}")
         
-    if zones < 0:
-        raise ValueError(f"Zones cannot be negative, got: {zones}")
-        
-    base_fare = 2.50 + (zones * 0.75)
-    return f"Route {orig.upper()}->{dest.upper()}: {zones} Zones, Fare ${base_fare:.2f}"
+    if not (0 <= age_int <= 120):
+        raise ValueError(f"Age must be between 0 and 120, got {age_int}")
+    return age_int
 
 
-def lookup_concession_discount(category_name):
-    if category_name is None or not isinstance(category_name, str):
-        raise TypeError("Category name must be a non-empty string")
-        
-    category = category_name.strip().upper()
-    discounts = {
-        "STANDARD": 1.00,
-        "STUDENT": 0.50,
-        "SENIOR": 0.35,
-        "MILITARY": 0.20,
-        "CHILD": 0.00
-    }
-    
-    if category not in discounts:
-        raise KeyError(f"Invalid concession category: '{category_name}'")
-        
-    return discounts[category]
-
-
-def compute_passenger_density(occupancy_ratio_str):
-    if occupancy_ratio_str is None or not isinstance(occupancy_ratio_str, str):
-        raise TypeError("Occupancy ratio must be a string formatted as 'passengers/km'")
-        
-    parts = occupancy_ratio_str.strip().split('/')
-    if len(parts) != 2:
-        raise ValueError(f"Invalid format. Expected 'passengers/km', got: '{occupancy_ratio_str}'")
-        
-    passengers_str, km_str = parts
-    
+def process_fare(fare):
+    if fare is None:
+        raise TypeError("Fare cannot be None")
+    if isinstance(fare, bool):
+        raise TypeError("Fare cannot be a boolean")
     try:
-        passengers = float(passengers_str)
-        km = float(km_str)
+        fare_float = float(fare)
     except (ValueError, TypeError):
-        raise ValueError("Passengers and kilometers must be numeric values")
+        raise ValueError(f"Invalid fare input: {fare}")
         
-    if passengers < 0 or km < 0:
-        raise ValueError("Passengers and kilometers cannot be negative")
+    if fare_float < 0:
+        raise ValueError(f"Fare cannot be negative: {fare_float}")
+    return round(fare_float, 2)
+
+
+def process_passenger_name(name):
+    if name is None:
+        raise TypeError("Name cannot be None")
+    if not isinstance(name, str):
+        raise TypeError("Name must be a string")
         
-    if km == 0:
-        raise ZeroDivisionError("Distance (km) cannot be zero")
-        
-    density = passengers / km
-    return round(density, 2)
-
-
-def main():
-    print("==== Running parse_transit_corridor ====")
-    c_input = input("Enter corridor (e.g. DT-UP-3): ")
-    try:
-        print(parse_transit_corridor(c_input))
-    except Exception as e:
-        print(f"Error: {e}")
-
-    print("\n==== Running lookup_concession_discount ====")
-    cat_input = input("Enter concession category (e.g. STUDENT, SENIOR): ")
-    try:
-        print("Multiplier:", lookup_concession_discount(cat_input))
-    except Exception as e:
-        print(f"Error: {e}")
-
-    print("\n==== Running compute_passenger_density ====")
-    d_input = input("Enter passengers/km (e.g. 50/10.0): ")
-    try:
-        print("Density:", compute_passenger_density(d_input))
-    except Exception as e:
-        print(f"Error: {e}")
+    cleaned_name = name.strip()
+    if not cleaned_name:
+        raise ValueError("Name cannot be empty or whitespace only")
+    return cleaned_name
 
 
 if __name__ == "__main__":
-    main()
+    print("Testing Processor Functions...")
+    test_inputs = [
+        ("25", 15.5, "Rahul Sharma"),
+        (None, -10, ""),
+        ("abc", "free", 123)
+    ]
+    
+    for age, fare, name in test_inputs:
+        print(f"\nTesting with inputs: age={age}, fare={fare}, name={name}")
+        try:
+            print("Age:", process_age(age))
+        except Exception as e:
+            print("Age Error:", e)
+            
+        try:
+            print("Fare:", process_fare(fare))
+        except Exception as e:
+            print("Fare Error:", e)
+            
+        try:
+            print("Name:", process_passenger_name(name))
+        except Exception as e:
+            print("Name Error:", e)
